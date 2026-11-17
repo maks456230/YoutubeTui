@@ -1,0 +1,84 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # 1) создаём релиз заранее, чтобы бинарь-пакеты (ytm-tui-bin) не гонялись
+  create-release:
+    name: GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: gh release create
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 \
+            || gh release create "$GITHUB_REF_NAME" \
+                 --title "$GITHUB_REF_NAME" \
+                 --generate-notes
+
+  # 2) собираем под нужные платформы и прикладываем архивы
+  upload:
+    name: ${{ matrix.target }}
+    needs: create-release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-24.04-arm
+          - target: x86_64-apple-darwin
+            os: macos-latest
+          - target: aarch64-apple-darwin
+            os: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
+
+      - name: собрать и приложить к релизу
+        uses: taiki-e/upload-rust-binary-action@v1
+        with:
+          bin: ytm,ytt
+          target: ${{ matrix.target }}
+          archive: ytm-tui-$tag-$target
+          include: LICENSE,README.md
+          checksum: sha256
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  # 3) печатаем суммы — их удобно вставлять в PKGBUILD (ytm-tui-bin)
+  checksums:
+    name: sha256 для AUR
+    needs: upload
+    runs-on: ubuntu-latest
+    steps:
+      - name: скачать x86_64-архив и посчитать сумму
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "$GITHUB_REF_NAME" \
+            --pattern "ytm-tui-*-x86_64-unknown-linux-gnu.tar.gz" \
+            --repo "$GITHUB_REPOSITORY"
+          sha256sum ytm-tui-*-x86_64-unknown-linux-gnu.tar.gz

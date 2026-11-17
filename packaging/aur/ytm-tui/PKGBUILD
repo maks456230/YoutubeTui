@@ -1,0 +1,37 @@
+# Maintainer: Maksim23Gamer <https://github.com/Maksim23Gamer>
+# Сборка из исходников: ставит два бинаря — ytm (YouTube Music) и ytt (YouTube).
+pkgname=ytm-tui
+pkgver=0.2.0
+pkgrel=1
+pkgdesc='TUI-плеер YouTube Music (ytm) и YouTube (ytt) с настоящими обложками в терминале'
+arch=('x86_64' 'aarch64')
+url='https://github.com/Maksim23Gamer/ytm-tui'
+license=('MIT')
+depends=('gcc-libs' 'mpv' 'yt-dlp' 'curl')
+makedepends=('cargo' 'rust')
+provides=('ytm' 'ytt')
+conflicts=('ytm-tui-bin' 'ytm-tui-git')
+options=('!lto')
+source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+  cd "$pkgname-$pkgver"
+  export CARGO_TARGET_DIR=target
+  cargo build --release --locked
+}
+
+check() {
+  cd "$pkgname-$pkgver"
+  export CARGO_TARGET_DIR=target
+  # юнит-тесты не требуют сети, mpv и yt-dlp
+  cargo test --release --locked --lib
+}
+
+package() {
+  cd "$pkgname-$pkgver"
+  install -Dm755 target/release/ytm "$pkgdir/usr/bin/ytm"
+  install -Dm755 target/release/ytt "$pkgdir/usr/bin/ytt"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
+}

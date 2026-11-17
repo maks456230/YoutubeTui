@@ -1,0 +1,36 @@
+[package]
+name = "ytm-tui"
+version = "0.2.0"
+edition = "2021"
+authors = ["Maksim23Gamer"]
+rust-version = "1.86"
+description = "TUI-плееры YouTube Music (ytm) и YouTube (ytt) с настоящими обложками: kitty / sixel / iTerm2 / halfblocks"
+license = "MIT"
+readme = "README.md"
+
+[lib]
+name = "ytmt"
+path = "src/lib.rs"
+
+[[bin]]
+name = "ytm"
+path = "src/bin/ytm.rs"
+
+[[bin]]
+name = "ytt"
+path = "src/bin/ytt.rs"
+
+[dependencies]
+anyhow = "1"
+dirs = "7"
+image = { version = "0.25", default-features = false, features = ["jpeg", "png", "webp"] }
+ratatui = "0.30"
+# без libchafa: фолбэк — встроенный unicode-halfblock рендерер
+ratatui-image = { version = "11", default-features = false, features = ["crossterm"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+lto = "thin"
+strip = true
+opt-level = 2
