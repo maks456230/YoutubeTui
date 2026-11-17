@@ -7,6 +7,7 @@ rust-version = "1.86"
 description = "TUI-плееры YouTube Music (ytm) и YouTube (ytt) с настоящими обложками: kitty / sixel / iTerm2 / halfblocks"
 license = "MIT"
 readme = "README.md"
+repository = "https://github.com/maks456230/YoutubeTui"
 
 [lib]
 name = "ytmt"

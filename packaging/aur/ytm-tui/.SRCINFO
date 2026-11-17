@@ -2,7 +2,7 @@ pkgbase = ytm-tui
 	pkgdesc = TUI-плеер YouTube Music (ytm) и YouTube (ytt) с настоящими обложками в терминале
 	pkgver = 0.2.0
 	pkgrel = 1
-	url = https://github.com/Maksim23Gamer/ytm-tui
+	url = https://github.com/maks456230/YoutubeTui
 	arch = x86_64
 	arch = aarch64
 	license = MIT
@@ -17,7 +17,7 @@ pkgbase = ytm-tui
 	conflicts = ytm-tui-bin
 	conflicts = ytm-tui-git
 	options = !lto
-	source = ytm-tui-0.2.0.tar.gz::https://github.com/Maksim23Gamer/ytm-tui/archive/v0.2.0.tar.gz
+	source = YoutubeTui-0.2.0.tar.gz::https://github.com/maks456230/YoutubeTui/archive/v0.2.0.tar.gz
 	sha256sums = SKIP
 
 pkgname = ytm-tui

@@ -78,7 +78,7 @@ yay -S ytm-tui          # или paru -S ytm-tui
 yay -S ytm-tui-bin      # вариант без компиляции
 ```
 
-**Готовые бинари** — [GitHub Releases](https://github.com/Maksim23Gamer/ytm-tui/releases):
+**Готовые бинари** — [GitHub Releases](https://github.com/maks456230/YoutubeTui/releases):
 Linux x86_64 / aarch64, macOS x86_64 / arm64 (в архиве `ytm`, `ytt`, `LICENSE`, суммы `sha256`).
 
 **Из исходников:**
